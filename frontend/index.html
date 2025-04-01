@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice RAG AI Assistant</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:,"> <!-- Prevent favicon request -->
+</head>
+<body>
+    <div class="container">
+        <h1>Voice RAG AI Assistant</h1>
+        
+        <div id="browser-warning" class="warning-message" style="display: none;">
+            <p>Your browser doesn't fully support all features needed for voice recording. 
+               For the best experience, please use Chrome, Firefox, or Edge.</p>
+        </div>
+        
+        <div class="assistant-container">
+            <div class="chat-display" id="chatDisplay">
+                <!-- Chat messages will appear here -->
+                <div class="welcome-message">
+                    <p>Hello! I'm your voice-enabled AI assistant. Ask me anything about the documents I've been trained on.</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="startStopButton" class="record-button">
+                    <span class="icon">🎤</span>
+                    <span class="text">Start Recording</span>
+                </button>
+                <div class="status" id="status">Ready</div>
+            </div>
+            
+            <div class="text-input">
+                <input type="text" id="textQuery" placeholder="Or type your question here...">
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+        
+        <div class="upload-container">
+            <h3>Upload Documents</h3>
+            <p>Add new text documents for the AI to reference:</p>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="documentFile" name="file" accept=".txt">
+                <button type="submit" id="uploadButton">Upload</button>
+            </form>
+            <div id="uploadStatus"></div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>About This Assistant</h3>
+            <p>This AI uses a Retrieval-Augmented Generation (RAG) system to provide answers based on specific documents.
+               You can interact with it using your voice or by typing questions.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/webrtc-handler.js"></script>
+    <script src="js/speech-processing.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

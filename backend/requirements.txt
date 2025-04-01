@@ -1,0 +1,9 @@
+Flask
+Flask-CORS
+numpy
+scikit-learn
+sentence-transformers
+SpeechRecognition
+google-generativeai
+gTTS
+python-dotenv
