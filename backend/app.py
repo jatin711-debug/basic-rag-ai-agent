@@ -10,6 +10,7 @@ import speech_recognition as sr
 from gtts import gTTS
 from dotenv import load_dotenv
 import time
+from pydub import AudioSegment
 import logging
 
 # Configure logging
@@ -124,10 +125,29 @@ def process_query():
                     return jsonify({'error': 'Invalid audio data format'}), 400
                 
                 # Save to temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio:
-                    temp_audio.write(audio_bytes)
-                    temp_audio_path = temp_audio.name
+                try:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio:
+                        temp_audio.write(audio_bytes)
+                        temp_audio_path = temp_audio.name
+                        temp_audio.flush()  # Ensure data is written before processing
+                        os.fsync(temp_audio.fileno())  # Force write to disk
+                except Exception as e:
+                    logger.error(f"Error saving temporary audio file: {str(e)}")
+                    return jsonify({'error': 'Failed to save temporary audio file'}), 500
                 
+                # Convert the raw audio to a proper WAV file using pydub
+                try:
+                    # pydub can auto-detect the file format from the file header
+                    audio_segment = AudioSegment.from_file(temp_audio_path)
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as wav_audio:
+                        audio_segment.export(wav_audio.name, format="wav")
+                        wav_audio_path = wav_audio.name
+                except Exception as e:
+                    logger.error(f"Audio conversion error: {str(e)}")
+                    os.unlink(temp_audio_path)
+                    return jsonify({'error': 'Audio conversion failed'}), 400
+                finally:
+                    os.unlink(temp_audio_path)  # Clean up the original temp file
                 # Convert speech to text
                 recognizer = sr.Recognizer()
                 try:
