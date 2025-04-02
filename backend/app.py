@@ -151,7 +151,7 @@ def process_query():
                 # Convert speech to text
                 recognizer = sr.Recognizer()
                 try:
-                    with sr.AudioFile(temp_audio_path) as source:
+                    with sr.AudioFile(wav_audio_path) as source:
                         audio = recognizer.record(source)
                         query = recognizer.recognize_google(audio)
                         logger.info(f"Transcribed query: {query}")
@@ -167,9 +167,9 @@ def process_query():
                     logger.error(f"Speech recognition error: {str(e)}")
                     os.unlink(temp_audio_path)
                     return jsonify({'error': 'Error processing audio'}), 500
-                
+                finally:
                 # Clean up
-                os.unlink(temp_audio_path)
+                    os.unlink(wav_audio_path)  # Clean up only after processing
             except Exception as e:
                 logger.error(f"Audio processing error: {str(e)}")
                 logger.error(traceback.format_exc())
